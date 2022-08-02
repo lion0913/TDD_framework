@@ -5,7 +5,9 @@ import com.ll.exam.article.controller.ArticleController;
 import com.ll.exam.home.controller.HomeController;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +17,15 @@ public class Con {
     public static final HomeController homeController;
 
     static {
-        articleController = new ArticleController();
-        homeController = new HomeController();
+//
+        Class<?> clazz = null;
+        try {
+            articleController = ArticleController.class.getDeclaredConstructor().newInstance();
+            homeController = HomeController.class.getDeclaredConstructor().newInstance();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static ArticleController getArticleController() {
