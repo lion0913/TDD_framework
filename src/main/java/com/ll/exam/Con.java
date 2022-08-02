@@ -1,6 +1,9 @@
 package com.ll.exam;
 
+import com.ll.exam.annotation.Autowired;
 import com.ll.exam.annotation.Controller;
+import com.ll.exam.annotation.Repository;
+import com.ll.exam.annotation.Service;
 import com.ll.exam.article.controller.ArticleController;
 import com.ll.exam.home.controller.HomeController;
 import org.reflections.Reflections;
@@ -15,14 +18,68 @@ public class Con {
 
     static {
         objects = new HashMap<>();
+        scanComponents();
+    }
 
-        objects.put(ArticleController.class, new ArticleController());
-        objects.put(HomeController.class, new HomeController());
+    private static void scanComponents() {
+        scanRepositories();
+        scanServices();
+        scanControllers();
 
+        // controller랑 service 의존관계 조립
+        resolveDependenciesComponent();
+    }
+
+    private static void resolveDependenciesComponent() {
+        for(Class cls : objects.keySet()) {
+            Object o = objects.get(cls);
+            resolveDependencies(o);
+        }
+    }
+
+    private static void resolveDependencies(Object o) {
+        Arrays.asList(o.getClass().getDeclaredFields())
+                .stream()
+                .filter(f -> f.isAnnotationPresent(Autowired.class))
+                .map(field -> {
+                    field.setAccessible(true);
+                    return field;
+                })
+                .forEach(field -> {
+                    Class cls = field.getType();
+                    Object dependency = objects.get(cls);
+
+                    try {
+                        field.set(o, dependency);
+                    } catch (IllegalAccessException e) {
+
+                    }
+                });
+    }
+
+    private static void scanServices() {
+        Reflections ref = new Reflections(App.BASE_PAGE_PATH);
+        for (Class<?> cls : ref.getTypesAnnotatedWith(Service.class)) {
+            objects.put(cls, Util.cls.newObj(cls, null));
+        }
+    }
+
+    private static void scanControllers() {
+        Reflections ref = new Reflections(App.BASE_PAGE_PATH);
+        for (Class<?> cls : ref.getTypesAnnotatedWith(Controller.class)) {
+            objects.put(cls, Util.cls.newObj(cls, null));
+        }
+    }
+
+    private static void scanRepositories() {
+        Reflections ref = new Reflections(App.BASE_PAGE_PATH);
+        for (Class<?> cls : ref.getTypesAnnotatedWith(Repository.class)) {
+            objects.put(cls, Util.cls.newObj(cls, null));
+        }
     }
 
     public static <T> T getObj(Class<T> cls) {
-        return (T)objects.get(cls);
+        return (T) objects.get(cls);
     }
 
 

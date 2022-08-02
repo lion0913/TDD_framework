@@ -2,6 +2,7 @@ package com.ll.exam;
 
 import com.ll.exam.article.controller.ArticleController;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 public class Util {
@@ -17,6 +18,26 @@ public class Util {
                 return defaultVal;
             } catch (NoSuchMethodException e) {
                 return defaultVal;
+            }
+        }
+    }
+
+    public static class reflection {
+        public static <T> T getFieldValue(Object o, String fieldName, T defaultValue) {
+            Field field = null;
+
+            try {
+                field = o.getClass().getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                return defaultValue;
+            }
+
+            field.setAccessible(true);
+
+            try {
+                return (T)field.get(o);
+            } catch (IllegalAccessException e) {
+                return defaultValue;
             }
         }
     }
