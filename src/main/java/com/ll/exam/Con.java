@@ -17,15 +17,8 @@ public class Con {
     public static final HomeController homeController;
 
     static {
-//
-        Class<?> clazz = null;
-        try {
-            articleController = ArticleController.class.getDeclaredConstructor().newInstance();
-            homeController = HomeController.class.getDeclaredConstructor().newInstance();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        articleController = Util.cls.newObj(ArticleController.class, null);
+        homeController = Util.cls.newObj(HomeController.class, null);
     }
 
     public static ArticleController getArticleController() {
