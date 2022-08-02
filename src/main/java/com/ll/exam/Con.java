@@ -8,22 +8,23 @@ import org.reflections.Reflections;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Con {
-    public static final ArticleController articleController;
-    public static final HomeController homeController;
+    private static Map<Class, Object> objects;
 
     static {
-        articleController = Util.cls.newObj(ArticleController.class, null);
-        homeController = Util.cls.newObj(HomeController.class, null);
+        objects = new HashMap<>();
+
+        objects.put(ArticleController.class, new ArticleController());
+        objects.put(HomeController.class, new HomeController());
+
     }
 
-    public static ArticleController getArticleController() {
-        return articleController;
+    public static <T> T getObj(Class<T> cls) {
+        return (T)objects.get(cls);
     }
+
 
     public static List<String> getAllControllers() {
         //controller들을 스캔해서 수집
@@ -39,11 +40,6 @@ public class Con {
         }
 
         return names;
-    }
-
-
-    public static HomeController getHomeController() {
-        return homeController;
     }
 
 }

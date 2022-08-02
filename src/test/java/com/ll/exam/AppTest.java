@@ -18,15 +18,15 @@ public class AppTest {
     @Test
     public void ioc_articleController() {
         //con을 통해 articleController를 받아옴
-        ArticleController articleController = Con.getArticleController();
+        ArticleController articleController = Con.getObj(ArticleController.class);
 
         assertThat(articleController).isNotNull();
     }
 
     @Test
     public void ioc_singleton() {
-        ArticleController articleController1 = Con.getArticleController();
-        ArticleController articleController2 = Con.getArticleController();
+        ArticleController articleController1 = Con.getObj(ArticleController.class);
+        ArticleController articleController2 = Con.getObj(ArticleController.class);
 
         assertThat(articleController1).isEqualTo(articleController2);
     }
@@ -41,15 +41,15 @@ public class AppTest {
 
     @Test
     public void ioc__homeController() {
-        HomeController homeController = Con.getHomeController();
+        HomeController homeController = Con.getObj(HomeController.class);
 
         assertThat(homeController).isNotNull();
     }
 
     @Test
     public void ioc_homeController_singleton() {
-        HomeController homeController1 = Con.getHomeController();
-        HomeController homeController2 = Con.getHomeController();
+        HomeController homeController1 = Con.getObj(HomeController.class);
+        HomeController homeController2 = Con.getObj(HomeController.class);
 
         assertThat(homeController2).isEqualTo(homeController1);
     }

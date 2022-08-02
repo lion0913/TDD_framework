@@ -6,17 +6,17 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Util {
     public static class cls {
-        public static <T> T newObj(Class<T> cls, Object defaultVal) {
+        public static <T> T newObj(Class<T> cls, T defaultVal) {
             try {
-                return (T)cls.class.getDeclaredConstructor().newInstance();
+                return (T)cls.getDeclaredConstructor().newInstance();
             } catch (InstantiationException e) {
-                return (T)defaultVal;
+                return defaultVal;
             } catch (IllegalAccessException e) {
-                return (T)defaultVal;
+                return defaultVal;
             } catch (InvocationTargetException e) {
-                return (T)defaultVal;
+                return defaultVal;
             } catch (NoSuchMethodException e) {
-                return (T)defaultVal;
+                return defaultVal;
             }
         }
     }
