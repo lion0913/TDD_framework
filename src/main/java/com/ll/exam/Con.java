@@ -58,21 +58,21 @@ public class Con {
     }
 
     private static void scanServices() {
-        Reflections ref = new Reflections(App.BASE_PAGE_PATH);
+        Reflections ref = new Reflections(App.BASE_PACKAGE_PATH);
         for (Class<?> cls : ref.getTypesAnnotatedWith(Service.class)) {
             objects.put(cls, Util.cls.newObj(cls, null));
         }
     }
 
     private static void scanControllers() {
-        Reflections ref = new Reflections(App.BASE_PAGE_PATH);
+        Reflections ref = new Reflections(App.BASE_PACKAGE_PATH);
         for (Class<?> cls : ref.getTypesAnnotatedWith(Controller.class)) {
             objects.put(cls, Util.cls.newObj(cls, null));
         }
     }
 
     private static void scanRepositories() {
-        Reflections ref = new Reflections(App.BASE_PAGE_PATH);
+        Reflections ref = new Reflections(App.BASE_PACKAGE_PATH);
         for (Class<?> cls : ref.getTypesAnnotatedWith(Repository.class)) {
             objects.put(cls, Util.cls.newObj(cls, null));
         }
