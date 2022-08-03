@@ -4,6 +4,8 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -12,6 +14,9 @@ import java.io.UnsupportedEncodingException;
 public class Request {
     private final HttpServletRequest req;
     private final HttpServletResponse resp;
+    @Setter
+    @Getter
+    private RouteInfo routeInfo;
 
     public Request(HttpServletRequest req, HttpServletResponse resp) {
         this.req = req;
@@ -26,8 +31,40 @@ public class Request {
         resp.setContentType("text/html; charset=utf-8");
     }
 
+    public String getPathParam(String paramName, String defaultValue) {
+        if ( routeInfo == null ) {
+            return defaultValue;
+        }
+
+        String path = routeInfo.getPath();
+
+        String[] pathBits = path.split("/");
+
+        int index = -1;
+
+        for ( int i = 0; i < pathBits.length; i++ ) {
+            String pathBit = pathBits[i];
+
+            if ( pathBit.equals("{" + paramName + "}") ) {
+                index = i - 4;
+                break;
+            }
+        }
+
+        if ( index != -1 ) {
+            return getPathValueByIndex(index, defaultValue);
+        }
+
+        return defaultValue;
+    }
+
+
     public String getParam(String paramName, String defaultValue) {
         String value = req.getParameter(paramName);
+
+        if ( value == null ) {
+            value = getPathParam(paramName, null);
+        }
 
         if (value == null || value.trim().length() == 0) {
             return defaultValue;
@@ -37,7 +74,8 @@ public class Request {
     }
 
     public long getLongParam(String paramName, long defaultValue) {
-        String value = req.getParameter(paramName);
+        String value = getParam(paramName, null);
+
 
         if (value == null) {
             return defaultValue;
@@ -51,7 +89,8 @@ public class Request {
     }
 
     public int getIntParam(String paramName, int defaultValue) {
-        String value = req.getParameter(paramName);
+        String value = getParam(paramName, null);
+
 
         if (value == null) {
             return defaultValue;
